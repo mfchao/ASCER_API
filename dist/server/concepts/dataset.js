@@ -21,9 +21,9 @@ class DatasetConcept {
     create(image, rating, category, user) {
         return __awaiter(this, void 0, void 0, function* () {
             if (rating) {
-                const alreadyRated = yield this.alreadyRated(image, rating, user);
+                const alreadyRated = yield this.alreadyRated(image, user);
                 if (alreadyRated) {
-                    const existingEntry = yield this.dataset.readOne({ image, rating, user });
+                    const existingEntry = yield this.dataset.readOne({ image, user });
                     if (existingEntry) {
                         yield this.dataset.updateOne({ _id: existingEntry._id }, { rating });
                         return { msg: "Rating updated successfully!", dataset: yield this.dataset.readOne({ _id: existingEntry._id }) };
@@ -39,9 +39,9 @@ class DatasetConcept {
             }
         });
     }
-    alreadyRated(image, rating, user) {
+    alreadyRated(image, user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const entry = yield this.dataset.readOne({ image, rating, user });
+            const entry = yield this.dataset.readOne({ image, user });
             return entry !== null;
         });
     }

@@ -84,7 +84,7 @@ const operations = [
         name: "Update Data Entry",
         endpoint: "/api/dataset",
         method: "PATCH",
-        fields: { update: { rating: "input" } },
+        fields: { image: "input", update: { rating: "input" } },
     },
     {
         name: "Get Dataset",
@@ -98,27 +98,8 @@ const operations = [
         method: "GET",
         fields: { image: "input" },
     },
-    // {
-    //   name: "Delete User",
-    //   endpoint: "/api/users",
-    //   method: "DELETE",
-    //   fields: {},
-    // },
-    // {
-    //   name: "Update Post",
-    //   endpoint: "/api/posts/:id",
-    //   method: "PATCH",
-    //   fields: { id: "input", update: { content: "input", options: { backgroundColor: "input" } } },
-    // },
-    // {
-    //   name: "Delete Post",
-    //   endpoint: "/api/posts/:id",
-    //   method: "DELETE",
-    //   fields: { id: "input" },
-    // },
 ];
 // Do not edit below here.
-// If you are interested in how this works, feel free to ask on forum!
 function updateResponse(code, response) {
     document.querySelector("#status-code").innerHTML = code;
     document.querySelector("#response-text").innerHTML = response;

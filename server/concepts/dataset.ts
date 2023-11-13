@@ -14,9 +14,9 @@ export default class DatasetConcept {
 
   async create(image: ObjectId, rating: number, category: string, user: ObjectId) {
     if (rating) {
-      const alreadyRated = await this.alreadyRated(image, rating, user);
+      const alreadyRated = await this.alreadyRated(image, user);
       if (alreadyRated) {
-        const existingEntry = await this.dataset.readOne({ image, rating, user });
+        const existingEntry = await this.dataset.readOne({ image, user });
         if (existingEntry) {
           await this.dataset.updateOne({ _id: existingEntry._id }, { rating });
           return { msg: "Rating updated successfully!", dataset: await this.dataset.readOne({ _id: existingEntry._id }) };
@@ -31,8 +31,8 @@ export default class DatasetConcept {
     
   }
 
-  private async alreadyRated(image: ObjectId, rating: number, user: ObjectId) {
-    const entry = await this.dataset.readOne({ image, rating, user });
+  private async alreadyRated(image: ObjectId, user: ObjectId) {
+    const entry = await this.dataset.readOne({ image, user });
     return entry !== null;  
   }
 

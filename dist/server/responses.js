@@ -1,4 +1,5 @@
 "use strict";
+// import { PostDoc } from "./concepts/post";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * This class does useful conversions for the frontend.
