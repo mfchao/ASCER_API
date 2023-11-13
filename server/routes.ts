@@ -18,12 +18,18 @@ class Routes {
   }
 
   @Router.post("/session/start")
-  async startSession(session: WebSessionDoc, token?: string) {
+  async startSession(session: WebSessionDoc, category: string, token?: string) {
     if (token) {
-      const user = WebSession.getUser(session);
-      WebSession.start(session, user, token);
+      const userID = WebSession.getUser(session);
+      if (userID) {
+        WebSession.start(session, category, userID, token);
+      }
     } else {
-      WebSession.start(session);
+      const user = await User.create(category);
+      const userID = user.user?._id;
+      if (userID) {
+        WebSession.start(session, category, userID);
+      }
     }
     return { msg: "Session started!", session };
   }
@@ -68,12 +74,14 @@ class Routes {
   @Router.post("/dataset")
   async createDataEntry(session: WebSessionDoc, image: string, rating: number) {
     const image_id = await Image.getImageByFile(image);
+    const category = WebSession.getCategory(session);
     const user = WebSession.getUser(session);
-    const category = await User.getCategory(user);
-    return await Dataset.create(image_id, rating, category);
+    if (category) {
+      return await Dataset.create(image_id, rating, category, user);
+    }
   }
 
-  @Router.get("/dataset")
+  @Router.get("/dataset/rating")
   async getRating(image: string) {
     const image_id = await Image.getImageByFile(image);
     return await Dataset.getRatingbyID(image_id);
@@ -84,6 +92,11 @@ class Routes {
     const image_id = await Image.getImageByFile(image);
     const entry_id = await Dataset.getIDbyfile(image_id);
     return await Dataset.update(entry_id, update);
+  }
+
+  @Router.get("/dataset")
+  async getDataset() {
+    return await Dataset.getDataset();
   }
 
   //   @Router.delete("/users")

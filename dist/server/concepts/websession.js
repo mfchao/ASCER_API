@@ -8,7 +8,7 @@ const mongodb_1 = require("mongodb");
 const errors_1 = require("./errors");
 const sessions = [];
 class WebSessionConcept {
-    start(session, user, token) {
+    start(session, category, user, token) {
         if (token) {
             this.isNotActive(session);
             const existingSession = this.getSessionFromToken(sessions, token.toString());
@@ -18,7 +18,8 @@ class WebSessionConcept {
         }
         else {
             this.isNotActive(session);
-            session.user = user === null || user === void 0 ? void 0 : user.toString();
+            session.category = category;
+            session.user = user.toString();
             session.token = crypto_1.default.randomBytes(20).toString("hex");
             sessions.push(session);
         }
@@ -29,6 +30,7 @@ class WebSessionConcept {
             this.saveAndContinueLater(session, email);
         }
         else {
+            session.category = undefined;
             session.user = undefined;
             session.token = "";
             session.email = "";
@@ -36,12 +38,12 @@ class WebSessionConcept {
         }
     }
     isActive(session) {
-        if (!session.token) {
+        if (!session.category && !session.user) {
             throw new errors_1.UnauthenticatedError("Must be in a session!");
         }
     }
     isNotActive(session) {
-        if (session.token) {
+        if (session.category && session.user) {
             throw new errors_1.NotAllowedError("Must not already be in a session!");
         }
     }
@@ -72,7 +74,11 @@ class WebSessionConcept {
         this.isActive(session);
         session.email = email;
         session.link = `https://ASCERwebsite.com/continue?token=${session.token}`;
-        // Send email to user
+        // Send email to category
+    }
+    getCategory(session) {
+        this.isActive(session);
+        return session.category;
     }
     getUser(session) {
         this.isActive(session);

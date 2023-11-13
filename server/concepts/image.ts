@@ -17,14 +17,14 @@ export default class ImageConcept {
   async getImageById(_id: ObjectId) {
     const image = await this.images.readOne({ _id });
     if (image === null) {
-      throw new NotFoundError(`User not found!`);
+      throw new NotFoundError(`Image not found!`);
     }
   }
 
   async getImageByFile(file: string) {
     const image = await this.images.readOne({ file });
     if (image === null) {
-      throw new NotFoundError(`User not found!`);
+      throw new NotFoundError(`Image not found!`);
     } else {
       return image._id;
     }

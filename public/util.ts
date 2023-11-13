@@ -24,10 +24,10 @@ const operations: operation[] = [
     fields: {},
   },
   {
-    name: "Start Session (empty for new)",
+    name: "Start Session (empty token for new)",
     endpoint: "/api/session/start",
     method: "POST",
-    fields: { token: "input" },
+    fields: { category: "input", token: "input" },
   },
   {
     name: "End Session (empty for done)",
@@ -76,6 +76,18 @@ const operations: operation[] = [
     endpoint: "/api/dataset",
     method: "PATCH",
     fields: { update: { rating: "input" } },
+  },
+  {
+    name: "Get Dataset",
+    endpoint: "/api/dataset",
+    method: "GET",
+    fields: {},
+  },
+  {
+    name: "Get Ratings for Image",
+    endpoint: "/api/dataset/rating",
+    method: "GET",
+    fields: {image: "input"},
   },
   // {
   //   name: "Delete User",

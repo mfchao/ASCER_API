@@ -7,6 +7,7 @@ export type WebSessionDoc = SessionData;
 
 declare module "express-session" {
   export interface SessionData {
+    category?: string;
     user?: string;
     token: string;
     email: string;
@@ -17,7 +18,7 @@ declare module "express-session" {
 const sessions: WebSessionDoc[] = [];
 
 export default class WebSessionConcept {
-  start(session: WebSessionDoc, user?: ObjectId, token?: string) {
+  start(session: WebSessionDoc, category: string, user: ObjectId, token?: string) {
     if (token) {
       this.isNotActive(session);
       const existingSession = this.getSessionFromToken(sessions, token.toString());
@@ -26,7 +27,8 @@ export default class WebSessionConcept {
       }
     } else {
       this.isNotActive(session);
-      session.user = user?.toString();
+      session.category = category;
+      session.user = user.toString();
       session.token = crypto.randomBytes(20).toString("hex");
       sessions.push(session);
     }
@@ -37,6 +39,7 @@ export default class WebSessionConcept {
     if (email) {
       this.saveAndContinueLater(session, email);
     } else {
+      session.category = undefined;
       session.user = undefined;
       session.token = "";
       session.email = "";
@@ -45,13 +48,13 @@ export default class WebSessionConcept {
   }
 
   isActive(session: WebSessionDoc) {
-    if (!session.token) {
+    if (!session.category && !session.user) {
       throw new UnauthenticatedError("Must be in a session!");
     }
   }
 
   isNotActive(session: WebSessionDoc) {
-    if (session.token) {
+    if (session.category && session.user) {
       throw new NotAllowedError("Must not already be in a session!");
     }
   }
@@ -85,7 +88,12 @@ export default class WebSessionConcept {
     session.email = email;
     session.link = `https://ASCERwebsite.com/continue?token=${session.token}`;
 
-    // Send email to user
+    // Send email to category
+  }
+
+  getCategory(session: WebSessionDoc) {
+    this.isActive(session);
+    return session.category;
   }
 
   getUser(session: WebSessionDoc) {

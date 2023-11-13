@@ -18,25 +18,41 @@ class DatasetConcept {
     constructor() {
         this.dataset = new doc_1.default("dataset");
     }
-    create(image, rating, category) {
+    create(image, rating, category, user) {
         return __awaiter(this, void 0, void 0, function* () {
             if (rating) {
-                const _id = yield this.dataset.createOne({ image, rating, category });
-                return { msg: "Data entry created successfully!", dataset: yield this.dataset.readOne({ _id }) };
+                const alreadyRated = yield this.alreadyRated(image, rating, user);
+                if (alreadyRated) {
+                    const existingEntry = yield this.dataset.readOne({ image, rating, user });
+                    if (existingEntry) {
+                        yield this.dataset.updateOne({ _id: existingEntry._id }, { rating });
+                        return { msg: "Rating updated successfully!", dataset: yield this.dataset.readOne({ _id: existingEntry._id }) };
+                    }
+                }
+                else {
+                    const _id = yield this.dataset.createOne({ image, rating, category, user });
+                    return { msg: "Data entry created successfully!", dataset: yield this.dataset.readOne({ _id }) };
+                }
             }
             else {
-                throw new errors_1.NotFoundError(`Please enter a rating!`);
+                throw new errors_1.BadValuesError("please submit a rating!");
             }
+        });
+    }
+    alreadyRated(image, rating, user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const entry = yield this.dataset.readOne({ image, rating, user });
+            return entry !== null;
         });
     }
     getRatingbyID(image) {
         return __awaiter(this, void 0, void 0, function* () {
-            const entry = yield this.dataset.readOne({ image });
+            const entry = yield this.dataset.readMany({ image });
             if (entry === null) {
                 throw new errors_1.NotFoundError(`User not found!`);
             }
             else {
-                return entry === null || entry === void 0 ? void 0 : entry.rating;
+                return entry;
             }
         });
     }

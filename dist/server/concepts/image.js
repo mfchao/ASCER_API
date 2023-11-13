@@ -28,7 +28,7 @@ class ImageConcept {
         return __awaiter(this, void 0, void 0, function* () {
             const image = yield this.images.readOne({ _id });
             if (image === null) {
-                throw new errors_1.NotFoundError(`User not found!`);
+                throw new errors_1.NotFoundError(`Image not found!`);
             }
         });
     }
@@ -36,7 +36,7 @@ class ImageConcept {
         return __awaiter(this, void 0, void 0, function* () {
             const image = yield this.images.readOne({ file });
             if (image === null) {
-                throw new errors_1.NotFoundError(`User not found!`);
+                throw new errors_1.NotFoundError(`Image not found!`);
             }
             else {
                 return image._id;

@@ -1,31 +1,47 @@
 import { ObjectId } from "mongodb";
 import DocCollection, { BaseDoc } from "../framework/doc";
-import { NotFoundError } from "./errors";
+import { BadValuesError, NotFoundError } from "./errors";
 
 export interface DatasetDoc extends BaseDoc {
   image: ObjectId;
   rating: number;
   category: string;
+  user: ObjectId;
 }
 
 export default class DatasetConcept {
   public readonly dataset = new DocCollection<DatasetDoc>("dataset");
 
-  async create(image: ObjectId, rating: number, category: string) {
+  async create(image: ObjectId, rating: number, category: string, user: ObjectId) {
     if (rating) {
-      const _id = await this.dataset.createOne({ image, rating, category });
-      return { msg: "Data entry created successfully!", dataset: await this.dataset.readOne({ _id }) };
+      const alreadyRated = await this.alreadyRated(image, rating, user);
+      if (alreadyRated) {
+        const existingEntry = await this.dataset.readOne({ image, rating, user });
+        if (existingEntry) {
+          await this.dataset.updateOne({ _id: existingEntry._id }, { rating });
+          return { msg: "Rating updated successfully!", dataset: await this.dataset.readOne({ _id: existingEntry._id }) };
+        }
+      } else {
+        const _id = await this.dataset.createOne({ image, rating, category, user });
+        return { msg: "Data entry created successfully!", dataset: await this.dataset.readOne({ _id }) };
+      }
     } else {
-      throw new NotFoundError(`Please enter a rating!`);
+      throw new BadValuesError("please submit a rating!")
     }
+    
+  }
+
+  private async alreadyRated(image: ObjectId, rating: number, user: ObjectId) {
+    const entry = await this.dataset.readOne({ image, rating, user });
+    return entry !== null;  
   }
 
   async getRatingbyID(image: ObjectId) {
-    const entry = await this.dataset.readOne({ image });
+    const entry = await this.dataset.readMany({ image });
     if (entry === null) {
       throw new NotFoundError(`User not found!`);
     } else {
-      return entry?.rating;
+      return entry;
     }
   }
 
@@ -50,3 +66,5 @@ export default class DatasetConcept {
     }
   }
 }
+
+

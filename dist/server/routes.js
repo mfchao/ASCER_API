@@ -60,6 +60,7 @@ let Routes = (() => {
     let _createDataEntry_decorators;
     let _getRating_decorators;
     let _updateData_decorators;
+    let _getDataset_decorators;
     return _a = class Routes {
             getCurrentSession(session, token) {
                 return __awaiter(this, void 0, void 0, function* () {
@@ -73,14 +74,21 @@ let Routes = (() => {
                     return Sessions;
                 });
             }
-            startSession(session, token) {
+            startSession(session, category, token) {
+                var _b;
                 return __awaiter(this, void 0, void 0, function* () {
                     if (token) {
-                        const user = app_1.WebSession.getUser(session);
-                        app_1.WebSession.start(session, user, token);
+                        const userID = app_1.WebSession.getUser(session);
+                        if (userID) {
+                            app_1.WebSession.start(session, category, userID, token);
+                        }
                     }
                     else {
-                        app_1.WebSession.start(session);
+                        const user = yield app_1.User.create(category);
+                        const userID = (_b = user.user) === null || _b === void 0 ? void 0 : _b._id;
+                        if (userID) {
+                            app_1.WebSession.start(session, category, userID);
+                        }
                     }
                     return { msg: "Session started!", session };
                 });
@@ -125,9 +133,11 @@ let Routes = (() => {
             createDataEntry(session, image, rating) {
                 return __awaiter(this, void 0, void 0, function* () {
                     const image_id = yield app_1.Image.getImageByFile(image);
+                    const category = app_1.WebSession.getCategory(session);
                     const user = app_1.WebSession.getUser(session);
-                    const category = yield app_1.User.getCategory(user);
-                    return yield app_1.Dataset.create(image_id, rating, category);
+                    if (category) {
+                        return yield app_1.Dataset.create(image_id, rating, category, user);
+                    }
                 });
             }
             getRating(image) {
@@ -141,6 +151,11 @@ let Routes = (() => {
                     const image_id = yield app_1.Image.getImageByFile(image);
                     const entry_id = yield app_1.Dataset.getIDbyfile(image_id);
                     return yield app_1.Dataset.update(entry_id, update);
+                });
+            }
+            getDataset() {
+                return __awaiter(this, void 0, void 0, function* () {
+                    return yield app_1.Dataset.getDataset();
                 });
             }
             constructor() {
@@ -159,8 +174,9 @@ let Routes = (() => {
             _createImage_decorators = [router_1.Router.post("/images")];
             _deleteImage_decorators = [router_1.Router.delete("/images")];
             _createDataEntry_decorators = [router_1.Router.post("/dataset")];
-            _getRating_decorators = [router_1.Router.get("/dataset")];
+            _getRating_decorators = [router_1.Router.get("/dataset/rating")];
             _updateData_decorators = [router_1.Router.patch("/dataset")];
+            _getDataset_decorators = [router_1.Router.get("/dataset")];
             __esDecorate(_a, null, _getCurrentSession_decorators, { kind: "method", name: "getCurrentSession", static: false, private: false, access: { has: obj => "getCurrentSession" in obj, get: obj => obj.getCurrentSession }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getSessions_decorators, { kind: "method", name: "getSessions", static: false, private: false, access: { has: obj => "getSessions" in obj, get: obj => obj.getSessions }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _startSession_decorators, { kind: "method", name: "startSession", static: false, private: false, access: { has: obj => "startSession" in obj, get: obj => obj.startSession }, metadata: _metadata }, null, _instanceExtraInitializers);
@@ -173,6 +189,7 @@ let Routes = (() => {
             __esDecorate(_a, null, _createDataEntry_decorators, { kind: "method", name: "createDataEntry", static: false, private: false, access: { has: obj => "createDataEntry" in obj, get: obj => obj.createDataEntry }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getRating_decorators, { kind: "method", name: "getRating", static: false, private: false, access: { has: obj => "getRating" in obj, get: obj => obj.getRating }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _updateData_decorators, { kind: "method", name: "updateData", static: false, private: false, access: { has: obj => "updateData" in obj, get: obj => obj.updateData }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _getDataset_decorators, { kind: "method", name: "getDataset", static: false, private: false, access: { has: obj => "getDataset" in obj, get: obj => obj.getDataset }, metadata: _metadata }, null, _instanceExtraInitializers);
             if (_metadata) Object.defineProperty(_a, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         })(),
         _a;
