@@ -18,19 +18,21 @@ class Routes {
   }
 
   @Router.post("/session/start")
-  async startSession(session: WebSessionDoc, category: string, token?: string) {
-    if (token) {
-      const userID = WebSession.getUser(session);
-      if (userID) {
-        WebSession.start(session, category, userID, token);
+  async startSession(session: WebSessionDoc, token: string, category?: string) {
+      const user = await User.getUserByToken(token)
+      
+      if (user != null) {
+        WebSession.start(session, token, user.category, user._id);
+      } else {
+        if (category) {
+          const newUser = await User.create(category, token);
+          if (newUser.user != null) {
+          WebSession.start(session, token, newUser.user.category, newUser.user._id);
+          }
+        } else {
+          throw new Error("Category not provided");
+        }
       }
-    } else {
-      const user = await User.create(category);
-      const userID = user.user?._id;
-      if (userID) {
-        WebSession.start(session, category, userID);
-      }
-    }
     return { msg: "Session started!", session };
   }
 
@@ -51,9 +53,9 @@ class Routes {
   }
 
   @Router.post("/users")
-  async createUser(session: WebSessionDoc, category: string) {
+  async createUser(session: WebSessionDoc, category: string, token: string) {
     WebSession.isActive(session);
-    return await User.create(category);
+    return await User.create(category, token);
   }
 
   @Router.get("/images")

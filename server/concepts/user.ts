@@ -4,14 +4,15 @@ import { BadValuesError, NotFoundError } from "./errors";
 
 export interface UserDoc extends BaseDoc {
   category: string;
+  token: string;
 }
 
 export default class UserConcept {
   public readonly users = new DocCollection<UserDoc>("users");
 
-  async create(category: string) {
-    await this.canCreate(category);
-    const _id = await this.users.createOne({ category });
+  async create(category: string, token: string) {
+    await this.canCreate(category, token);
+    const _id = await this.users.createOne({ category, token });
     return { msg: "User created successfully!", user: await this.users.readOne({ _id }) };
   }
 
@@ -20,6 +21,10 @@ export default class UserConcept {
     if (user === null) {
       throw new NotFoundError(`User not found!`);
     }
+  }
+
+  async getUserByToken(token: string) {
+    return await this.users.readOne({ token });
   }
 
   async getCategory(_id: ObjectId) {
@@ -36,9 +41,9 @@ export default class UserConcept {
     return users;
   }
 
-  private async canCreate(category: string) {
-    if (!category) {
-      throw new BadValuesError("Category must be non-empty!");
+  private async canCreate(category: string, token: string) {
+    if (!category && !token) {
+      throw new BadValuesError("Category and token must be non-empty!");
     }
   }
 

@@ -18,10 +18,10 @@ class UserConcept {
     constructor() {
         this.users = new doc_1.default("users");
     }
-    create(category) {
+    create(category, token) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.canCreate(category);
-            const _id = yield this.users.createOne({ category });
+            yield this.canCreate(category, token);
+            const _id = yield this.users.createOne({ category, token });
             return { msg: "User created successfully!", user: yield this.users.readOne({ _id }) };
         });
     }
@@ -31,6 +31,11 @@ class UserConcept {
             if (user === null) {
                 throw new errors_1.NotFoundError(`User not found!`);
             }
+        });
+    }
+    getUserByToken(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.users.readOne({ token });
         });
     }
     getCategory(_id) {
@@ -50,10 +55,10 @@ class UserConcept {
             return users;
         });
     }
-    canCreate(category) {
+    canCreate(category, token) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!category) {
-                throw new errors_1.BadValuesError("Category must be non-empty!");
+            if (!category && !token) {
+                throw new errors_1.BadValuesError("Category and token must be non-empty!");
             }
         });
     }

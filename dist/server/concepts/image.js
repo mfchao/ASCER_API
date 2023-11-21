@@ -21,7 +21,7 @@ class ImageConcept {
     create(file) {
         return __awaiter(this, void 0, void 0, function* () {
             const _id = yield this.images.createOne({ file });
-            return { msg: "User created successfully!", user: yield this.images.readOne({ _id }) };
+            return { msg: "Image created successfully!", user: yield this.images.readOne({ _id }) };
         });
     }
     getImageById(_id) {

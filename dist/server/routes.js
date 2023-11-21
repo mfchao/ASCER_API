@@ -74,20 +74,21 @@ let Routes = (() => {
                     return Sessions;
                 });
             }
-            startSession(session, category, token) {
-                var _b;
+            startSession(session, token, category) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    if (token) {
-                        const userID = app_1.WebSession.getUser(session);
-                        if (userID) {
-                            app_1.WebSession.start(session, category, userID, token);
-                        }
+                    const user = yield app_1.User.getUserByToken(token);
+                    if (user != null) {
+                        app_1.WebSession.start(session, token, user.category, user._id);
                     }
                     else {
-                        const user = yield app_1.User.create(category);
-                        const userID = (_b = user.user) === null || _b === void 0 ? void 0 : _b._id;
-                        if (userID) {
-                            app_1.WebSession.start(session, category, userID);
+                        if (category) {
+                            const newUser = yield app_1.User.create(category, token);
+                            if (newUser.user != null) {
+                                app_1.WebSession.start(session, token, newUser.user.category, newUser.user._id);
+                            }
+                        }
+                        else {
+                            throw new Error("Category not provided");
                         }
                     }
                     return { msg: "Session started!", session };
@@ -109,10 +110,10 @@ let Routes = (() => {
                     return yield app_1.User.getUsers();
                 });
             }
-            createUser(session, category) {
+            createUser(session, category, token) {
                 return __awaiter(this, void 0, void 0, function* () {
                     app_1.WebSession.isActive(session);
-                    return yield app_1.User.create(category);
+                    return yield app_1.User.create(category, token);
                 });
             }
             getImages() {

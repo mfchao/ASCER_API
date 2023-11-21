@@ -11,7 +11,7 @@ export default class ImageConcept {
 
   async create(file: string) {
     const _id = await this.images.createOne({ file });
-    return { msg: "User created successfully!", user: await this.images.readOne({ _id }) };
+    return { msg: "Image created successfully!", user: await this.images.readOne({ _id }) };
   }
 
   async getImageById(_id: ObjectId) {

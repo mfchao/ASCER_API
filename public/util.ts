@@ -24,10 +24,10 @@ const operations: operation[] = [
     fields: {},
   },
   {
-    name: "Start Session (empty token for new)",
+    name: "Start Session",
     endpoint: "/api/session/start",
     method: "POST",
-    fields: { category: "input", token: "input" },
+    fields: { token: "input", category: "input" },
   },
   {
     name: "End Session (empty for done)",
@@ -39,7 +39,7 @@ const operations: operation[] = [
     name: "Create User",
     endpoint: "/api/users",
     method: "POST",
-    fields: { category: "input" },
+    fields: { category: "input", token: "input" },
   },
   {
     name: "Get Users",
