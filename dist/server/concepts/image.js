@@ -18,10 +18,15 @@ class ImageConcept {
     constructor() {
         this.images = new doc_1.default("images");
     }
-    create(file) {
+    create(filename, link) {
         return __awaiter(this, void 0, void 0, function* () {
-            const _id = yield this.images.createOne({ file });
-            return { msg: "Image created successfully!", user: yield this.images.readOne({ _id }) };
+            if (filename && link) {
+                const _id = yield this.images.createOne({ filename, link });
+                return { msg: "Image created successfully!", user: yield this.images.readOne({ _id }) };
+            }
+            else {
+                throw new errors_1.NotFoundError("Filename and Link are required");
+            }
         });
     }
     getImageById(_id) {
@@ -32,9 +37,9 @@ class ImageConcept {
             }
         });
     }
-    getImageByFile(file) {
+    getImageByFilename(filename) {
         return __awaiter(this, void 0, void 0, function* () {
-            const image = yield this.images.readOne({ file });
+            const image = yield this.images.readOne({ filename });
             if (image === null) {
                 throw new errors_1.NotFoundError(`Image not found!`);
             }
@@ -49,14 +54,20 @@ class ImageConcept {
             return users;
         });
     }
-    delete(file) {
+    delete(filename) {
         return __awaiter(this, void 0, void 0, function* () {
-            const image = yield this.images.readOne({ file });
+            const image = yield this.images.readOne({ filename });
             if (!image) {
                 throw new errors_1.NotFoundError(`Image not found!`);
             }
-            yield this.images.deleteOne({ file });
+            yield this.images.deleteOne({ filename });
             return { msg: "Image deleted!" };
+        });
+    }
+    deleteAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.images.deleteMany({});
+            return { msg: "Images deleted!" };
         });
     }
 }

@@ -11,17 +11,23 @@ type operation = {
 };
 
 const operations: operation[] = [
+  // {
+  //   name: "Get Current Session",
+  //   endpoint: "/api/session",
+  //   method: "GET",
+  //   fields: { token: "input" },
+  // },
+  // {
+  //   name: "Get All Sessions",
+  //   endpoint: "/api/session/sessions",
+  //   method: "GET",
+  //   fields: {},
+  // },
   {
-    name: "Get Current Session",
+    name: "Get Current Token",
     endpoint: "/api/session",
     method: "GET",
-    fields: { token: "input" },
-  },
-  {
-    name: "Get All Sessions",
-    endpoint: "/api/session/sessions",
-    method: "GET",
-    fields: {},
+    fields: { },
   },
   {
     name: "Start Session",
@@ -51,7 +57,7 @@ const operations: operation[] = [
     name: "Create Image",
     endpoint: "/api/images",
     method: "POST",
-    fields: { file: "input" },
+    fields: { file: "input", link: "input" },
   },
   {
     name: "Get Images",
@@ -61,9 +67,15 @@ const operations: operation[] = [
   },
   {
     name: "Delete Image",
-    endpoint: "/api/images",
+    endpoint: "/api/images/file",
     method: "DELETE",
     fields: { file: "input" },
+  },
+  {
+    name: "Delete All Images",
+    endpoint: "/api/images",
+    method: "DELETE",
+    fields: {},
   },
   {
     name: "Create Data Entry",
