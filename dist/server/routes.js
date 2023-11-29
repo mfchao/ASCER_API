@@ -61,6 +61,7 @@ let Routes = (() => {
     let _getRating_decorators;
     let _updateData_decorators;
     let _getDataset_decorators;
+    let _getDatasetbyToken_decorators;
     return _a = class Routes {
             getCurrentSession(session, token) {
                 return __awaiter(this, void 0, void 0, function* () {
@@ -77,6 +78,9 @@ let Routes = (() => {
             startSession(session, token, category) {
                 return __awaiter(this, void 0, void 0, function* () {
                     const user = yield app_1.User.getUserByToken(token);
+                    // if  (user && category) {
+                    //   throw new Error("This session already exists!");
+                    // } 
                     if (user != null) {
                         app_1.WebSession.start(session, token, user.category, user._id);
                     }
@@ -135,9 +139,9 @@ let Routes = (() => {
                 return __awaiter(this, void 0, void 0, function* () {
                     const image_id = yield app_1.Image.getImageByFile(image);
                     const category = app_1.WebSession.getCategory(session);
-                    const user = app_1.WebSession.getUser(session);
+                    const token = app_1.WebSession.getToken(session);
                     if (category) {
-                        return yield app_1.Dataset.create(image_id, rating, category, user);
+                        return yield app_1.Dataset.create(image_id, rating, category, token);
                     }
                 });
             }
@@ -159,6 +163,11 @@ let Routes = (() => {
                     return yield app_1.Dataset.getDataset();
                 });
             }
+            getDatasetbyToken(token) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    return yield app_1.Dataset.getDatasetbyToken(token);
+                });
+            }
             constructor() {
                 __runInitializers(this, _instanceExtraInitializers);
             }
@@ -178,6 +187,7 @@ let Routes = (() => {
             _getRating_decorators = [router_1.Router.get("/dataset/rating")];
             _updateData_decorators = [router_1.Router.patch("/dataset")];
             _getDataset_decorators = [router_1.Router.get("/dataset")];
+            _getDatasetbyToken_decorators = [router_1.Router.get("/dataset/token")];
             __esDecorate(_a, null, _getCurrentSession_decorators, { kind: "method", name: "getCurrentSession", static: false, private: false, access: { has: obj => "getCurrentSession" in obj, get: obj => obj.getCurrentSession }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getSessions_decorators, { kind: "method", name: "getSessions", static: false, private: false, access: { has: obj => "getSessions" in obj, get: obj => obj.getSessions }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _startSession_decorators, { kind: "method", name: "startSession", static: false, private: false, access: { has: obj => "startSession" in obj, get: obj => obj.startSession }, metadata: _metadata }, null, _instanceExtraInitializers);
@@ -191,6 +201,7 @@ let Routes = (() => {
             __esDecorate(_a, null, _getRating_decorators, { kind: "method", name: "getRating", static: false, private: false, access: { has: obj => "getRating" in obj, get: obj => obj.getRating }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _updateData_decorators, { kind: "method", name: "updateData", static: false, private: false, access: { has: obj => "updateData" in obj, get: obj => obj.updateData }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getDataset_decorators, { kind: "method", name: "getDataset", static: false, private: false, access: { has: obj => "getDataset" in obj, get: obj => obj.getDataset }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _getDatasetbyToken_decorators, { kind: "method", name: "getDatasetbyToken", static: false, private: false, access: { has: obj => "getDatasetbyToken" in obj, get: obj => obj.getDatasetbyToken }, metadata: _metadata }, null, _instanceExtraInitializers);
             if (_metadata) Object.defineProperty(_a, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         })(),
         _a;

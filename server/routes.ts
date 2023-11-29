@@ -19,8 +19,12 @@ class Routes {
 
   @Router.post("/session/start")
   async startSession(session: WebSessionDoc, token: string, category?: string) {
+    
       const user = await User.getUserByToken(token)
-      
+      // if  (user && category) {
+      //   throw new Error("This session already exists!");
+      // } 
+
       if (user != null) {
         WebSession.start(session, token, user.category, user._id);
       } else {
@@ -77,9 +81,9 @@ class Routes {
   async createDataEntry(session: WebSessionDoc, image: string, rating: number) {
     const image_id = await Image.getImageByFile(image);
     const category = WebSession.getCategory(session);
-    const user = WebSession.getUser(session);
+    const token = WebSession.getToken(session);
     if (category) {
-      return await Dataset.create(image_id, rating, category, user);
+      return await Dataset.create(image_id, rating, category, token);
     }
   }
 
@@ -99,6 +103,11 @@ class Routes {
   @Router.get("/dataset")
   async getDataset() {
     return await Dataset.getDataset();
+  }
+
+  @Router.get("/dataset/token")
+  async getDatasetbyToken(token: string) {
+    return await Dataset.getDatasetbyToken(token);
   }
 
 }

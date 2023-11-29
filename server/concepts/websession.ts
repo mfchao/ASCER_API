@@ -117,6 +117,11 @@ export default class WebSessionConcept {
     return session.category;
   }
 
+  getToken(session: WebSessionDoc) {
+    this.isActive(session);
+    return session.token;
+  }
+
   getUser(session: WebSessionDoc) {
     this.isActive(session);
     return new ObjectId(session.user);

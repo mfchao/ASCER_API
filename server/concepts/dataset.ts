@@ -6,23 +6,23 @@ export interface DatasetDoc extends BaseDoc {
   image: ObjectId;
   rating: number;
   category: string;
-  user: ObjectId;
+  token: string;
 }
 
 export default class DatasetConcept {
   public readonly dataset = new DocCollection<DatasetDoc>("dataset");
 
-  async create(image: ObjectId, rating: number, category: string, user: ObjectId) {
+  async create(image: ObjectId, rating: number, category: string, token: string) {
     if (rating) {
-      const alreadyRated = await this.alreadyRated(image, user);
+      const alreadyRated = await this.alreadyRated(image, token);
       if (alreadyRated) {
-        const existingEntry = await this.dataset.readOne({ image, user });
+        const existingEntry = await this.dataset.readOne({ image, token });
         if (existingEntry) {
           await this.dataset.updateOne({ _id: existingEntry._id }, { rating });
           return { msg: "Rating updated successfully!", dataset: await this.dataset.readOne({ _id: existingEntry._id }) };
         }
       } else {
-        const _id = await this.dataset.createOne({ image, rating, category, user });
+        const _id = await this.dataset.createOne({ image, rating, category, token });
         return { msg: "Data entry created successfully!", dataset: await this.dataset.readOne({ _id }) };
       }
     } else {
@@ -31,15 +31,15 @@ export default class DatasetConcept {
     
   }
 
-  private async alreadyRated(image: ObjectId, user: ObjectId) {
-    const entry = await this.dataset.readOne({ image, user });
+  private async alreadyRated(image: ObjectId, token: string) {
+    const entry = await this.dataset.readOne({ image, token });
     return entry !== null;  
   }
 
   async getRatingbyID(image: ObjectId) {
     const entry = await this.dataset.readMany({ image });
     if (entry === null) {
-      throw new NotFoundError(`User not found!`);
+      throw new NotFoundError(`token not found!`);
     } else {
       return entry;
     }
@@ -48,7 +48,7 @@ export default class DatasetConcept {
   async getIDbyfile(image: ObjectId) {
     const entry = await this.dataset.readOne({ image });
     if (entry === null) {
-      throw new NotFoundError(`User not found!`);
+      throw new NotFoundError(`token not found!`);
     } else {
       return entry?._id;
     }
@@ -56,6 +56,11 @@ export default class DatasetConcept {
 
   async getDataset() {
     const dataset = await this.dataset.readMany({});
+    return dataset;
+  }
+
+  async getDatasetbyToken(token: string) {
+    const dataset = await this.dataset.readMany({token});
     return dataset;
   }
 

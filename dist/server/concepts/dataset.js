@@ -18,19 +18,19 @@ class DatasetConcept {
     constructor() {
         this.dataset = new doc_1.default("dataset");
     }
-    create(image, rating, category, user) {
+    create(image, rating, category, token) {
         return __awaiter(this, void 0, void 0, function* () {
             if (rating) {
-                const alreadyRated = yield this.alreadyRated(image, user);
+                const alreadyRated = yield this.alreadyRated(image, token);
                 if (alreadyRated) {
-                    const existingEntry = yield this.dataset.readOne({ image, user });
+                    const existingEntry = yield this.dataset.readOne({ image, token });
                     if (existingEntry) {
                         yield this.dataset.updateOne({ _id: existingEntry._id }, { rating });
                         return { msg: "Rating updated successfully!", dataset: yield this.dataset.readOne({ _id: existingEntry._id }) };
                     }
                 }
                 else {
-                    const _id = yield this.dataset.createOne({ image, rating, category, user });
+                    const _id = yield this.dataset.createOne({ image, rating, category, token });
                     return { msg: "Data entry created successfully!", dataset: yield this.dataset.readOne({ _id }) };
                 }
             }
@@ -39,9 +39,9 @@ class DatasetConcept {
             }
         });
     }
-    alreadyRated(image, user) {
+    alreadyRated(image, token) {
         return __awaiter(this, void 0, void 0, function* () {
-            const entry = yield this.dataset.readOne({ image, user });
+            const entry = yield this.dataset.readOne({ image, token });
             return entry !== null;
         });
     }
@@ -49,7 +49,7 @@ class DatasetConcept {
         return __awaiter(this, void 0, void 0, function* () {
             const entry = yield this.dataset.readMany({ image });
             if (entry === null) {
-                throw new errors_1.NotFoundError(`User not found!`);
+                throw new errors_1.NotFoundError(`token not found!`);
             }
             else {
                 return entry;
@@ -60,7 +60,7 @@ class DatasetConcept {
         return __awaiter(this, void 0, void 0, function* () {
             const entry = yield this.dataset.readOne({ image });
             if (entry === null) {
-                throw new errors_1.NotFoundError(`User not found!`);
+                throw new errors_1.NotFoundError(`token not found!`);
             }
             else {
                 return entry === null || entry === void 0 ? void 0 : entry._id;
@@ -70,6 +70,12 @@ class DatasetConcept {
     getDataset() {
         return __awaiter(this, void 0, void 0, function* () {
             const dataset = yield this.dataset.readMany({});
+            return dataset;
+        });
+    }
+    getDatasetbyToken(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const dataset = yield this.dataset.readMany({ token });
             return dataset;
         });
     }

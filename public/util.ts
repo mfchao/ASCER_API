@@ -84,6 +84,12 @@ const operations: operation[] = [
     fields: {},
   },
   {
+    name: "Get Dataset by Token",
+    endpoint: "/api/dataset/token",
+    method: "GET",
+    fields: {token: "input"},
+  },
+  {
     name: "Get Ratings for Image",
     endpoint: "/api/dataset/rating",
     method: "GET",

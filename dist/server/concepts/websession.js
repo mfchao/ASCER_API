@@ -98,6 +98,10 @@ class WebSessionConcept {
         this.isActive(session);
         return session.category;
     }
+    getToken(session) {
+        this.isActive(session);
+        return session.token;
+    }
     getUser(session) {
         this.isActive(session);
         return new mongodb_1.ObjectId(session.user);
