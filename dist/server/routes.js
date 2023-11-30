@@ -52,16 +52,20 @@ let Routes = (() => {
     let _startSession_decorators;
     let _endSession_decorators;
     let _getUsers_decorators;
+    let _deleteUsers_decorators;
+    let _getQuestion_decorators;
+    let _getDescriptions_decorators;
     let _createUser_decorators;
     let _getImages_decorators;
     let _createImage_decorators;
     let _deleteImage_decorators;
-    let _deleteAllImages_decorators;
+    let _getFilename_decorators;
     let _createDataEntry_decorators;
     let _getRating_decorators;
     let _updateData_decorators;
     let _getDataset_decorators;
     let _getDatasetbyToken_decorators;
+    let _deleteDataset_decorators;
     return _a = class Routes {
             // @Router.get("/session")
             // async getCurrentSession(session: WebSessionDoc, token?: string) {
@@ -118,6 +122,29 @@ let Routes = (() => {
                     return yield app_1.User.getUsers();
                 });
             }
+            deleteUsers() {
+                return __awaiter(this, void 0, void 0, function* () {
+                    return yield app_1.User.deleteAll();
+                });
+            }
+            getQuestion(session) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    app_1.WebSession.isActive(session);
+                    const category = app_1.WebSession.getCategory(session);
+                    if (category) {
+                        return yield app_1.User.getQuestion(category);
+                    }
+                });
+            }
+            getDescriptions(session) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    app_1.WebSession.isActive(session);
+                    const category = app_1.WebSession.getCategory(session);
+                    if (category) {
+                        return yield app_1.User.getDescriptions(category);
+                    }
+                });
+            }
             createUser(session, category, token) {
                 return __awaiter(this, void 0, void 0, function* () {
                     app_1.WebSession.isActive(session);
@@ -139,9 +166,9 @@ let Routes = (() => {
                     return yield app_1.Image.delete(file);
                 });
             }
-            deleteAllImages() {
+            getFilename(_id) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    return yield app_1.Image.deleteAll();
+                    return yield app_1.Image.getFilename(_id);
                 });
             }
             createDataEntry(session, image, rating) {
@@ -177,6 +204,11 @@ let Routes = (() => {
                     return yield app_1.Dataset.getDatasetbyToken(token);
                 });
             }
+            deleteDataset() {
+                return __awaiter(this, void 0, void 0, function* () {
+                    return yield app_1.Dataset.deleteAll();
+                });
+            }
             constructor() {
                 __runInitializers(this, _instanceExtraInitializers);
             }
@@ -187,30 +219,38 @@ let Routes = (() => {
             _startSession_decorators = [router_1.Router.post("/session/start")];
             _endSession_decorators = [router_1.Router.post("/session/end")];
             _getUsers_decorators = [router_1.Router.get("/users")];
+            _deleteUsers_decorators = [router_1.Router.delete("/users")];
+            _getQuestion_decorators = [router_1.Router.get("/users/category")];
+            _getDescriptions_decorators = [router_1.Router.get("/users/descriptions")];
             _createUser_decorators = [router_1.Router.post("/users")];
             _getImages_decorators = [router_1.Router.get("/images")];
             _createImage_decorators = [router_1.Router.post("/images")];
-            _deleteImage_decorators = [router_1.Router.delete("/images/file")];
-            _deleteAllImages_decorators = [router_1.Router.delete("/images")];
+            _deleteImage_decorators = [router_1.Router.delete("/images")];
+            _getFilename_decorators = [router_1.Router.get("/images/:_id")];
             _createDataEntry_decorators = [router_1.Router.post("/dataset")];
             _getRating_decorators = [router_1.Router.get("/dataset/rating")];
             _updateData_decorators = [router_1.Router.patch("/dataset")];
             _getDataset_decorators = [router_1.Router.get("/dataset")];
-            _getDatasetbyToken_decorators = [router_1.Router.get("/dataset/token")];
+            _getDatasetbyToken_decorators = [router_1.Router.get("/dataset/users/:token")];
+            _deleteDataset_decorators = [router_1.Router.delete("/dataset")];
             __esDecorate(_a, null, _getCurrentToken_decorators, { kind: "method", name: "getCurrentToken", static: false, private: false, access: { has: obj => "getCurrentToken" in obj, get: obj => obj.getCurrentToken }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _startSession_decorators, { kind: "method", name: "startSession", static: false, private: false, access: { has: obj => "startSession" in obj, get: obj => obj.startSession }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _endSession_decorators, { kind: "method", name: "endSession", static: false, private: false, access: { has: obj => "endSession" in obj, get: obj => obj.endSession }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getUsers_decorators, { kind: "method", name: "getUsers", static: false, private: false, access: { has: obj => "getUsers" in obj, get: obj => obj.getUsers }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _deleteUsers_decorators, { kind: "method", name: "deleteUsers", static: false, private: false, access: { has: obj => "deleteUsers" in obj, get: obj => obj.deleteUsers }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _getQuestion_decorators, { kind: "method", name: "getQuestion", static: false, private: false, access: { has: obj => "getQuestion" in obj, get: obj => obj.getQuestion }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _getDescriptions_decorators, { kind: "method", name: "getDescriptions", static: false, private: false, access: { has: obj => "getDescriptions" in obj, get: obj => obj.getDescriptions }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _createUser_decorators, { kind: "method", name: "createUser", static: false, private: false, access: { has: obj => "createUser" in obj, get: obj => obj.createUser }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getImages_decorators, { kind: "method", name: "getImages", static: false, private: false, access: { has: obj => "getImages" in obj, get: obj => obj.getImages }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _createImage_decorators, { kind: "method", name: "createImage", static: false, private: false, access: { has: obj => "createImage" in obj, get: obj => obj.createImage }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _deleteImage_decorators, { kind: "method", name: "deleteImage", static: false, private: false, access: { has: obj => "deleteImage" in obj, get: obj => obj.deleteImage }, metadata: _metadata }, null, _instanceExtraInitializers);
-            __esDecorate(_a, null, _deleteAllImages_decorators, { kind: "method", name: "deleteAllImages", static: false, private: false, access: { has: obj => "deleteAllImages" in obj, get: obj => obj.deleteAllImages }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _getFilename_decorators, { kind: "method", name: "getFilename", static: false, private: false, access: { has: obj => "getFilename" in obj, get: obj => obj.getFilename }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _createDataEntry_decorators, { kind: "method", name: "createDataEntry", static: false, private: false, access: { has: obj => "createDataEntry" in obj, get: obj => obj.createDataEntry }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getRating_decorators, { kind: "method", name: "getRating", static: false, private: false, access: { has: obj => "getRating" in obj, get: obj => obj.getRating }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _updateData_decorators, { kind: "method", name: "updateData", static: false, private: false, access: { has: obj => "updateData" in obj, get: obj => obj.updateData }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getDataset_decorators, { kind: "method", name: "getDataset", static: false, private: false, access: { has: obj => "getDataset" in obj, get: obj => obj.getDataset }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getDatasetbyToken_decorators, { kind: "method", name: "getDatasetbyToken", static: false, private: false, access: { has: obj => "getDatasetbyToken" in obj, get: obj => obj.getDatasetbyToken }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _deleteDataset_decorators, { kind: "method", name: "deleteDataset", static: false, private: false, access: { has: obj => "deleteDataset" in obj, get: obj => obj.deleteDataset }, metadata: _metadata }, null, _instanceExtraInitializers);
             if (_metadata) Object.defineProperty(_a, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         })(),
         _a;

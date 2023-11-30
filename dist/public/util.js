@@ -51,15 +51,27 @@ const operations = [
         fields: { email: "input" },
     },
     {
-        name: "Create User",
-        endpoint: "/api/users",
-        method: "POST",
-        fields: { category: "input", token: "input" },
+        name: "Get Question",
+        endpoint: "/api/users/category",
+        method: "GET",
+        fields: {},
+    },
+    {
+        name: "Get Descriptions",
+        endpoint: "/api/users/descriptions",
+        method: "GET",
+        fields: {},
     },
     {
         name: "Get Users",
         endpoint: "/api/users",
         method: "GET",
+        fields: {},
+    },
+    {
+        name: "Delete All Users",
+        endpoint: "/api/users",
+        method: "DELETE",
         fields: {},
     },
     {
@@ -73,6 +85,12 @@ const operations = [
         endpoint: "/api/images",
         method: "GET",
         fields: {},
+    },
+    {
+        name: "Get Images",
+        endpoint: "/api/images/:image",
+        method: "GET",
+        fields: { image: "input" },
     },
     {
         name: "Delete Image",
@@ -106,7 +124,7 @@ const operations = [
     },
     {
         name: "Get Dataset by Token",
-        endpoint: "/api/dataset/token",
+        endpoint: "/api/dataset/users/:token",
         method: "GET",
         fields: { token: "input" },
     },
@@ -115,6 +133,12 @@ const operations = [
         endpoint: "/api/dataset/rating",
         method: "GET",
         fields: { image: "input" },
+    },
+    {
+        name: "Delete Dataset",
+        endpoint: "/api/dataset",
+        method: "DELETE",
+        fields: {},
     },
 ];
 // Do not edit below here.

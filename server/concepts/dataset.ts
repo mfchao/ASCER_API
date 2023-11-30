@@ -70,6 +70,11 @@ export default class DatasetConcept {
       return { msg: "Entry updated successfully!" };
     }
   }
+
+  async deleteAll() {
+    await this.dataset.deleteMany({});
+    return { msg: "dataset deleted!" };
+  }
 }
 
 

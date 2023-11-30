@@ -21,7 +21,26 @@ class UserConcept {
     create(category, token) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.canCreate(category, token);
-            const _id = yield this.users.createOne({ category, token });
+            let question;
+            let descriptions;
+            if (category == "Sales") {
+                question = "On a scale of 1 to 5, how likely do you think this tile product is to achieve success in the market, considering both immediate sales volume and long-term market presence?";
+                descriptions = ["Very Unlikely", "Very Likely"];
+            }
+            else if (category == "Customer") {
+                question =
+                    "How would you rate the overall aesthetics and design of the tile product (on a scale of 1 to 5), considering the potential satisfaction of both traditional and trend-focused customer segments?";
+                descriptions = ["Very UnAesthetic", "Very Aesthetic"];
+            }
+            else if (category == "Designer") {
+                question = "On a scale of 1 to 5, how likely do you believe this tile product is to be a trend-setting product, influencing future design preferences in the US market?";
+                descriptions = ["Very Unlikely", "Very Likely"];
+            }
+            else {
+                question = "How trendy do you think this tile design is?";
+                descriptions = ["Very UnTrendy", "Very Trendy"];
+            }
+            const _id = yield this.users.createOne({ category, token, question, descriptions });
             return { msg: "User created successfully!", user: yield this.users.readOne({ _id }) };
         });
     }
@@ -36,6 +55,28 @@ class UserConcept {
     getUserByToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.users.readOne({ token });
+        });
+    }
+    getQuestion(category) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.users.readOne({ category });
+            if (user === null) {
+                throw new errors_1.NotFoundError(`User not found!`);
+            }
+            else {
+                return user.question;
+            }
+        });
+    }
+    getDescriptions(category) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.users.readOne({ category });
+            if (user === null) {
+                throw new errors_1.NotFoundError(`User not found!`);
+            }
+            else {
+                return user.descriptions;
+            }
         });
     }
     getCategory(_id) {
@@ -53,6 +94,12 @@ class UserConcept {
         return __awaiter(this, void 0, void 0, function* () {
             const users = yield this.users.readMany({});
             return users;
+        });
+    }
+    deleteAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.users.deleteMany({});
+            return { msg: "Users deleted!" };
         });
     }
     canCreate(category, token) {

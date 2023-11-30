@@ -40,6 +40,15 @@ export default class ImageConcept {
     return users;
   }
 
+  async getFilename(_id: ObjectId) {
+    const image = await this.images.readOne({ _id });
+    if (image === null) {
+      throw new NotFoundError(`Image not found!`);
+    } else {
+      return image.filename;
+    }
+  }
+
   async delete(filename: string) {
     const image = await this.images.readOne({ filename });
     if (!image) {

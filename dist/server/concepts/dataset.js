@@ -87,6 +87,12 @@ class DatasetConcept {
             }
         });
     }
+    deleteAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.dataset.deleteMany({});
+            return { msg: "dataset deleted!" };
+        });
+    }
 }
 exports.default = DatasetConcept;
 //# sourceMappingURL=dataset.js.map

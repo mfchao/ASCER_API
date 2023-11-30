@@ -3,6 +3,8 @@ import { Router, getExpressRouter } from "./framework/router";
 import { Dataset, Image, User, WebSession } from "./app";
 import { DatasetDoc } from "./concepts/dataset";
 import { WebSessionDoc } from "./concepts/websession";
+import { ObjectId } from "mongodb";
+
 
 class Routes {
   // @Router.get("/session")
@@ -61,6 +63,29 @@ class Routes {
     return await User.getUsers();
   }
 
+  @Router.delete("/users")
+  async deleteUsers() {
+    return await User.deleteAll();
+  }
+
+  @Router.get("/users/category")
+  async getQuestion(session: WebSessionDoc) {
+    WebSession.isActive(session);
+    const category = WebSession.getCategory(session);
+    if (category) {
+      return await User.getQuestion(category);
+    }
+  }
+
+  @Router.get("/users/descriptions")
+  async getDescriptions(session: WebSessionDoc) {
+    WebSession.isActive(session);
+    const category = WebSession.getCategory(session);
+    if (category) {
+      return await User.getDescriptions(category);
+    }
+  }
+
   @Router.post("/users")
   async createUser(session: WebSessionDoc, category: string, token: string) {
     WebSession.isActive(session);
@@ -77,14 +102,14 @@ class Routes {
     return await Image.create(file, link);
   }
 
-  @Router.delete("/images/file")
+  @Router.delete("/images")
   async deleteImage(file: string) {
     return await Image.delete(file);
   }
 
-  @Router.delete("/images")
-  async deleteAllImages() {
-    return await Image.deleteAll();
+  @Router.get("/images/:_id")
+  async getFilename(_id: ObjectId) {
+    return await Image.getFilename(_id);
   }
 
   @Router.post("/dataset")
@@ -115,9 +140,14 @@ class Routes {
     return await Dataset.getDataset();
   }
 
-  @Router.get("/dataset/token")
+  @Router.get("/dataset/users/:token")
   async getDatasetbyToken(token: string) {
     return await Dataset.getDatasetbyToken(token);
+  }
+
+  @Router.delete("/dataset")
+  async deleteDataset() {
+    return await Dataset.deleteAll();
   }
 }
 

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongodb_1 = require("mongodb");
 const errors_1 = require("./errors");
-const tokens = ["user1", "user2", "user3", "user4"];
+const tokens = ["user1", "user2", "user3", "user4", "user5", "user6", "user7", "user8", "user9", "user10"];
 const sessions = {};
 class WebSessionConcept {
     start(session, token, category, user) {

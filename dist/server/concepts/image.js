@@ -54,6 +54,17 @@ class ImageConcept {
             return users;
         });
     }
+    getFilename(_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const image = yield this.images.readOne({ _id });
+            if (image === null) {
+                throw new errors_1.NotFoundError(`Image not found!`);
+            }
+            else {
+                return image.filename;
+            }
+        });
+    }
     delete(filename) {
         return __awaiter(this, void 0, void 0, function* () {
             const image = yield this.images.readOne({ filename });
