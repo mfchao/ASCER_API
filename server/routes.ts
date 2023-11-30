@@ -112,6 +112,13 @@ class Routes {
     return await Image.getFilename(_id);
   }
 
+  @Router.get("/dataset/rating/:image")
+  async getRatingNumber(session: WebSessionDoc, image: string) {
+    const image_id = await Image.getImageByFilename(image);
+    const token = WebSession.getToken(session);
+    return await Dataset.getRatingNumber(image_id, token);
+  }
+
   @Router.post("/dataset")
   async createDataEntry(session: WebSessionDoc, image: string, rating: number) {
     const image_id = await Image.getImageByFilename(image);

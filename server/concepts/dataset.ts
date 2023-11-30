@@ -71,6 +71,15 @@ export default class DatasetConcept {
     }
   }
 
+  async getRatingNumber(image: ObjectId, token: string) {
+    const entry = await this.dataset.readOne({ image, token });
+    if (entry !== null) {
+      return entry.rating;
+    } else {
+      return;
+    }
+  }
+
   async deleteAll() {
     await this.dataset.deleteMany({});
     return { msg: "dataset deleted!" };
