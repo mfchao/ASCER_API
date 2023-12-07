@@ -33,7 +33,7 @@ const operations: operation[] = [
     name: "Start Session",
     endpoint: "/api/session/start",
     method: "POST",
-    fields: { token: "input", category: "input" },
+    fields: { token: "input"},
   },
   {
     name: "End Session (empty for done)",

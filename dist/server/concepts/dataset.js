@@ -87,6 +87,17 @@ class DatasetConcept {
             }
         });
     }
+    getRatingNumber(image, token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const entry = yield this.dataset.readOne({ image, token });
+            if (entry !== null) {
+                return entry.rating;
+            }
+            else {
+                return;
+            }
+        });
+    }
     deleteAll() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.dataset.deleteMany({});

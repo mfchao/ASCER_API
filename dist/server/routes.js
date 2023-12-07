@@ -60,6 +60,7 @@ let Routes = (() => {
     let _createImage_decorators;
     let _deleteImage_decorators;
     let _getFilename_decorators;
+    let _getRatingNumber_decorators;
     let _createDataEntry_decorators;
     let _getRating_decorators;
     let _updateData_decorators;
@@ -83,24 +84,17 @@ let Routes = (() => {
             //   const Sessions = WebSession.getSessions();
             //   return Sessions;
             // }
-            startSession(session, token, category) {
+            startSession(session, token) {
                 return __awaiter(this, void 0, void 0, function* () {
                     const user = yield app_1.User.getUserByToken(token);
-                    // if  (user && category) {
-                    //   throw new Error("This session already exists!");
-                    // }
                     if (user != null) {
-                        app_1.WebSession.start(session, token, user.category, user._id);
+                        app_1.WebSession.start(session, token, user._id);
                     }
                     else {
-                        if (category) {
-                            const newUser = yield app_1.User.create(category, token);
-                            if (newUser.user != null) {
-                                app_1.WebSession.start(session, token, newUser.user.category, newUser.user._id);
-                            }
-                        }
-                        else {
-                            throw new Error("Category not provided");
+                        const category = app_1.WebSession.getCategoryFromToken(token);
+                        const newUser = yield app_1.User.create(category, token);
+                        if (newUser.user != null) {
+                            app_1.WebSession.start(session, token, newUser.user._id);
                         }
                     }
                     return { msg: "Session started!", session };
@@ -171,6 +165,13 @@ let Routes = (() => {
                     return yield app_1.Image.getFilename(_id);
                 });
             }
+            getRatingNumber(session, image) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    const image_id = yield app_1.Image.getImageByFilename(image);
+                    const token = app_1.WebSession.getToken(session);
+                    return yield app_1.Dataset.getRatingNumber(image_id, token);
+                });
+            }
             createDataEntry(session, image, rating) {
                 return __awaiter(this, void 0, void 0, function* () {
                     const image_id = yield app_1.Image.getImageByFilename(image);
@@ -227,6 +228,7 @@ let Routes = (() => {
             _createImage_decorators = [router_1.Router.post("/images")];
             _deleteImage_decorators = [router_1.Router.delete("/images")];
             _getFilename_decorators = [router_1.Router.get("/images/:_id")];
+            _getRatingNumber_decorators = [router_1.Router.get("/dataset/rating/:image")];
             _createDataEntry_decorators = [router_1.Router.post("/dataset")];
             _getRating_decorators = [router_1.Router.get("/dataset/rating")];
             _updateData_decorators = [router_1.Router.patch("/dataset")];
@@ -245,6 +247,7 @@ let Routes = (() => {
             __esDecorate(_a, null, _createImage_decorators, { kind: "method", name: "createImage", static: false, private: false, access: { has: obj => "createImage" in obj, get: obj => obj.createImage }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _deleteImage_decorators, { kind: "method", name: "deleteImage", static: false, private: false, access: { has: obj => "deleteImage" in obj, get: obj => obj.deleteImage }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getFilename_decorators, { kind: "method", name: "getFilename", static: false, private: false, access: { has: obj => "getFilename" in obj, get: obj => obj.getFilename }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _getRatingNumber_decorators, { kind: "method", name: "getRatingNumber", static: false, private: false, access: { has: obj => "getRatingNumber" in obj, get: obj => obj.getRatingNumber }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _createDataEntry_decorators, { kind: "method", name: "createDataEntry", static: false, private: false, access: { has: obj => "createDataEntry" in obj, get: obj => obj.createDataEntry }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getRating_decorators, { kind: "method", name: "getRating", static: false, private: false, access: { has: obj => "getRating" in obj, get: obj => obj.getRating }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _updateData_decorators, { kind: "method", name: "updateData", static: false, private: false, access: { has: obj => "updateData" in obj, get: obj => obj.updateData }, metadata: _metadata }, null, _instanceExtraInitializers);

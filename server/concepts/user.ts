@@ -3,10 +3,12 @@ import DocCollection, { BaseDoc } from "../framework/doc";
 import { BadValuesError, NotFoundError } from "./errors";
 
 export interface UserDoc extends BaseDoc {
-  category: string;
   token: string;
+  category: string;
   question: string;
   descriptions: string[];
+  confidence?: number;
+
 }
 
 export default class UserConcept {
@@ -86,5 +88,10 @@ export default class UserConcept {
     if (!category && !token) {
       throw new BadValuesError("Category and token must be non-empty!");
     }
+  }
+
+  async update(_id: ObjectId, update: Partial<UserDoc>) {
+    await this.users.updateOne({ _id }, update);
+    return { msg: "User updated successfully!" };
   }
 }

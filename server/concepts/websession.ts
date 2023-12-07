@@ -15,24 +15,22 @@ declare module "express-session" {
   }
 }
 
-const tokens: string[] = ["user1", "user2", "user3", "user4", "user5", "user6", "user7", "user8", "user9", "user10"];
+const tokens: { [token: string]: string } = {
+  user1: "User",
+  user2: "Producer",
+  user3: "Manufacturer",
+};
+
 const sessions: { [token: string]: WebSessionDoc } = {};
 
 export default class WebSessionConcept {
-  start(session: WebSessionDoc, token: string, category: string, user: ObjectId) {
+  start(session: WebSessionDoc, token: string, user: ObjectId) {
     if (token) {
-      if (tokens.includes(token)) {
-        if (sessions[token]) {
-          session.category = sessions[token].category;
-          session.user = sessions[token].user?.toString();
-          session.token = token;
-          // return sessions[token];
-        } else {
-          session.category = category;
-          session.user = user.toString();
-          session.token = token;
-          sessions[token] = session;
-        }
+      if (tokens[token]) {
+        session.category = tokens[token];
+        session.user = user.toString();
+        session.token = token;
+        sessions[token] = session;
       } else {
         throw new UnauthenticatedError("Invalid token!");
       }
@@ -40,7 +38,6 @@ export default class WebSessionConcept {
       throw new UnauthenticatedError("Token is required!");
     }
   }
-
   end(session: WebSessionDoc, email?: string) {
     this.isActive(session);
     if (email) {
@@ -115,6 +112,10 @@ export default class WebSessionConcept {
   getCategory(session: WebSessionDoc) {
     this.isActive(session);
     return session.category;
+  }
+
+  getCategoryFromToken(token:string){
+    return tokens[token];
   }
 
   getToken(session: WebSessionDoc) {

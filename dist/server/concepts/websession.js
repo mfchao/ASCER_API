@@ -2,25 +2,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongodb_1 = require("mongodb");
 const errors_1 = require("./errors");
-const tokens = ["user1", "user2", "user3", "user4", "user5", "user6", "user7", "user8", "user9", "user10"];
+const tokens = {
+    user1: "User",
+    user2: "Producer",
+    user3: "Manufacturer",
+};
 const sessions = {};
 class WebSessionConcept {
-    start(session, token, category, user) {
-        var _a;
+    start(session, token, user) {
         if (token) {
-            if (tokens.includes(token)) {
-                if (sessions[token]) {
-                    session.category = sessions[token].category;
-                    session.user = (_a = sessions[token].user) === null || _a === void 0 ? void 0 : _a.toString();
-                    session.token = token;
-                    // return sessions[token];
-                }
-                else {
-                    session.category = category;
-                    session.user = user.toString();
-                    session.token = token;
-                    sessions[token] = session;
-                }
+            if (tokens[token]) {
+                session.category = tokens[token];
+                session.user = user.toString();
+                session.token = token;
+                sessions[token] = session;
             }
             else {
                 throw new errors_1.UnauthenticatedError("Invalid token!");
@@ -97,6 +92,9 @@ class WebSessionConcept {
     getCategory(session) {
         this.isActive(session);
         return session.category;
+    }
+    getCategoryFromToken(token) {
+        return tokens[token];
     }
     getToken(session) {
         this.isActive(session);

@@ -4,6 +4,7 @@ import { Dataset, Image, User, WebSession } from "./app";
 import { DatasetDoc } from "./concepts/dataset";
 import { WebSessionDoc } from "./concepts/websession";
 import { ObjectId } from "mongodb";
+import { UserDoc } from "./concepts/user";
 
 
 class Routes {
@@ -26,22 +27,16 @@ class Routes {
   // }
 
   @Router.post("/session/start")
-  async startSession(session: WebSessionDoc, token: string, category?: string) {
+  async startSession(session: WebSessionDoc, token: string) {
     const user = await User.getUserByToken(token);
-    // if  (user && category) {
-    //   throw new Error("This session already exists!");
-    // }
 
     if (user != null) {
-      WebSession.start(session, token, user.category, user._id);
+      WebSession.start(session, token, user._id);
     } else {
-      if (category) {
-        const newUser = await User.create(category, token);
-        if (newUser.user != null) {
-          WebSession.start(session, token, newUser.user.category, newUser.user._id);
-        }
-      } else {
-        throw new Error("Category not provided");
+      const category = WebSession.getCategoryFromToken(token);
+      const newUser = await User.create(category, token);
+      if (newUser.user != null) {
+        WebSession.start(session, token, newUser.user._id);
       }
     }
     return { msg: "Session started!", session };
@@ -66,6 +61,12 @@ class Routes {
   @Router.delete("/users")
   async deleteUsers() {
     return await User.deleteAll();
+  }
+
+  @Router.patch("/users")
+  async updateUser(session: WebSessionDoc, update: Partial<UserDoc>) {
+    const user = WebSession.getUser(session);
+    return await User.update(user, update);
   }
 
   @Router.get("/users/category")
