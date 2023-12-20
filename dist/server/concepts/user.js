@@ -109,6 +109,12 @@ class UserConcept {
             }
         });
     }
+    update(_id, update) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.users.updateOne({ _id }, update);
+            return { msg: "User updated successfully!" };
+        });
+    }
 }
 exports.default = UserConcept;
 //# sourceMappingURL=user.js.map

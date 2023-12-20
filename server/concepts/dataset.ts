@@ -4,7 +4,8 @@ import { BadValuesError, NotFoundError } from "./errors";
 
 export interface DatasetDoc extends BaseDoc {
   image: ObjectId;
-  rating: number;
+  ratings: number[];
+  timings: number[];
   category: string;
   token: string;
 }
@@ -12,34 +13,46 @@ export interface DatasetDoc extends BaseDoc {
 export default class DatasetConcept {
   public readonly dataset = new DocCollection<DatasetDoc>("dataset");
 
-  async create(image: ObjectId, rating: number, category: string, token: string) {
+  async create(image: ObjectId, rating: number, category: string, token: string, timing: number) {
     if (rating) {
       const alreadyRated = await this.alreadyRated(image, token);
       if (alreadyRated) {
         const existingEntry = await this.dataset.readOne({ image, token });
         if (existingEntry) {
-          await this.dataset.updateOne({ _id: existingEntry._id }, { rating });
+          // await this.dataset.updateOne({ _id: existingEntry._id }, { rating });
+          existingEntry.ratings.push(rating);
+          existingEntry.timings.push(timing);
+          await this.dataset.updateOne({ _id: existingEntry._id }, { ratings: existingEntry.ratings });
+          await this.dataset.updateOne({ _id: existingEntry._id }, { timings: existingEntry.timings });
           return { msg: "Rating updated successfully!", dataset: await this.dataset.readOne({ _id: existingEntry._id }) };
         }
       } else {
-        const _id = await this.dataset.createOne({ image, rating, category, token });
+        const _id = await this.dataset.createOne({ image, ratings: [rating], timings: [timing], category, token });
         return { msg: "Data entry created successfully!", dataset: await this.dataset.readOne({ _id }) };
       }
     } else {
-      throw new BadValuesError("please submit a rating!")
+      throw new BadValuesError("please submit a rating!");
     }
-    
   }
 
   private async alreadyRated(image: ObjectId, token: string) {
     const entry = await this.dataset.readOne({ image, token });
-    return entry !== null;  
+    return entry !== null;
+  }
+
+  async getRatingNumber(image: ObjectId, token: string) {
+    const entry = await this.dataset.readOne({ image, token });
+    if (entry !== null) {
+      return entry.ratings[entry.ratings.length - 1];
+    } else {
+      return;
+    }
   }
 
   async getRatingbyID(image: ObjectId) {
     const entry = await this.dataset.readMany({ image });
     if (entry === null) {
-      throw new NotFoundError(`token not found!`);
+      throw new NotFoundError(`entry not found!`);
     } else {
       return entry;
     }
@@ -48,7 +61,7 @@ export default class DatasetConcept {
   async getIDbyfile(image: ObjectId) {
     const entry = await this.dataset.readOne({ image });
     if (entry === null) {
-      throw new NotFoundError(`token not found!`);
+      throw new NotFoundError(`entry not found!`);
     } else {
       return entry?._id;
     }
@@ -60,23 +73,14 @@ export default class DatasetConcept {
   }
 
   async getDatasetbyToken(token: string) {
-    const dataset = await this.dataset.readMany({token});
+    const dataset = await this.dataset.readMany({ token });
     return dataset;
   }
 
   async update(_id: ObjectId, update: Partial<DatasetDoc>) {
-    if (update.rating !== undefined) {
+    if (update.ratings !== undefined) {
       await this.dataset.updateOne({ _id }, update);
       return { msg: "Entry updated successfully!" };
-    }
-  }
-
-  async getRatingNumber(image: ObjectId, token: string) {
-    const entry = await this.dataset.readOne({ image, token });
-    if (entry !== null) {
-      return entry.rating;
-    } else {
-      return;
     }
   }
 

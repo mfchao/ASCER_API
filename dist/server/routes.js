@@ -49,10 +49,12 @@ let Routes = (() => {
     var _a;
     let _instanceExtraInitializers = [];
     let _getCurrentToken_decorators;
+    let _getSeed_decorators;
     let _startSession_decorators;
     let _endSession_decorators;
     let _getUsers_decorators;
     let _deleteUsers_decorators;
+    let _updateUser_decorators;
     let _getQuestion_decorators;
     let _getDescriptions_decorators;
     let _createUser_decorators;
@@ -77,6 +79,12 @@ let Routes = (() => {
                 return __awaiter(this, void 0, void 0, function* () {
                     const currentToken = app_1.WebSession.getToken(session);
                     return currentToken;
+                });
+            }
+            getSeed(token) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    const currentSeed = app_1.WebSession.getSeedFromToken(token);
+                    return currentSeed;
                 });
             }
             // @Router.get("/session/sessions")
@@ -119,6 +127,12 @@ let Routes = (() => {
             deleteUsers() {
                 return __awaiter(this, void 0, void 0, function* () {
                     return yield app_1.User.deleteAll();
+                });
+            }
+            updateUser(session, update) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    const user = app_1.WebSession.getUser(session);
+                    return yield app_1.User.update(user, update);
                 });
             }
             getQuestion(session) {
@@ -172,13 +186,13 @@ let Routes = (() => {
                     return yield app_1.Dataset.getRatingNumber(image_id, token);
                 });
             }
-            createDataEntry(session, image, rating) {
+            createDataEntry(session, image, rating, timing) {
                 return __awaiter(this, void 0, void 0, function* () {
                     const image_id = yield app_1.Image.getImageByFilename(image);
                     const category = app_1.WebSession.getCategory(session);
                     const token = app_1.WebSession.getToken(session);
                     if (category) {
-                        return yield app_1.Dataset.create(image_id, rating, category, token);
+                        return yield app_1.Dataset.create(image_id, rating, category, token, timing);
                     }
                 });
             }
@@ -217,10 +231,12 @@ let Routes = (() => {
         (() => {
             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
             _getCurrentToken_decorators = [router_1.Router.get("/session")];
+            _getSeed_decorators = [router_1.Router.get("/session/:token")];
             _startSession_decorators = [router_1.Router.post("/session/start")];
             _endSession_decorators = [router_1.Router.post("/session/end")];
             _getUsers_decorators = [router_1.Router.get("/users")];
             _deleteUsers_decorators = [router_1.Router.delete("/users")];
+            _updateUser_decorators = [router_1.Router.patch("/users")];
             _getQuestion_decorators = [router_1.Router.get("/users/category")];
             _getDescriptions_decorators = [router_1.Router.get("/users/descriptions")];
             _createUser_decorators = [router_1.Router.post("/users")];
@@ -236,10 +252,12 @@ let Routes = (() => {
             _getDatasetbyToken_decorators = [router_1.Router.get("/dataset/users/:token")];
             _deleteDataset_decorators = [router_1.Router.delete("/dataset")];
             __esDecorate(_a, null, _getCurrentToken_decorators, { kind: "method", name: "getCurrentToken", static: false, private: false, access: { has: obj => "getCurrentToken" in obj, get: obj => obj.getCurrentToken }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _getSeed_decorators, { kind: "method", name: "getSeed", static: false, private: false, access: { has: obj => "getSeed" in obj, get: obj => obj.getSeed }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _startSession_decorators, { kind: "method", name: "startSession", static: false, private: false, access: { has: obj => "startSession" in obj, get: obj => obj.startSession }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _endSession_decorators, { kind: "method", name: "endSession", static: false, private: false, access: { has: obj => "endSession" in obj, get: obj => obj.endSession }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getUsers_decorators, { kind: "method", name: "getUsers", static: false, private: false, access: { has: obj => "getUsers" in obj, get: obj => obj.getUsers }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _deleteUsers_decorators, { kind: "method", name: "deleteUsers", static: false, private: false, access: { has: obj => "deleteUsers" in obj, get: obj => obj.deleteUsers }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _updateUser_decorators, { kind: "method", name: "updateUser", static: false, private: false, access: { has: obj => "updateUser" in obj, get: obj => obj.updateUser }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getQuestion_decorators, { kind: "method", name: "getQuestion", static: false, private: false, access: { has: obj => "getQuestion" in obj, get: obj => obj.getQuestion }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getDescriptions_decorators, { kind: "method", name: "getDescriptions", static: false, private: false, access: { has: obj => "getDescriptions" in obj, get: obj => obj.getDescriptions }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _createUser_decorators, { kind: "method", name: "createUser", static: false, private: false, access: { has: obj => "createUser" in obj, get: obj => obj.createUser }, metadata: _metadata }, null, _instanceExtraInitializers);

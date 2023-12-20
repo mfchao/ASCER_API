@@ -8,6 +8,8 @@ export interface UserDoc extends BaseDoc {
   question: string;
   descriptions: string[];
   confidence?: number;
+  comments?: string;
+  email?: string;
 
 }
 

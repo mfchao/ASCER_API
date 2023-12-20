@@ -20,6 +20,13 @@ class Routes {
     return currentToken;
   }
 
+
+  @Router.get("/session/:token")
+  async getSeed(token: string) {
+    const currentSeed = WebSession.getSeedFromToken(token);
+    return currentSeed;
+  }
+
   // @Router.get("/session/sessions")
   // async getSessions() {
   //   const Sessions = WebSession.getSessions();
@@ -121,12 +128,12 @@ class Routes {
   }
 
   @Router.post("/dataset")
-  async createDataEntry(session: WebSessionDoc, image: string, rating: number) {
+  async createDataEntry(session: WebSessionDoc, image: string, rating: number, timing: number) {
     const image_id = await Image.getImageByFilename(image);
     const category = WebSession.getCategory(session);
     const token = WebSession.getToken(session);
     if (category) {
-      return await Dataset.create(image_id, rating, category, token);
+      return await Dataset.create(image_id, rating, category, token, timing);
     }
   }
 

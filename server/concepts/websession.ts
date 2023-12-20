@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import { SessionData } from "express-session";
 import { ObjectId } from "mongodb";
 import { NotAllowedError, UnauthenticatedError } from "./errors";
@@ -12,13 +11,24 @@ declare module "express-session" {
     token: string;
     email: string;
     link: string;
+    seed: number;
   }
 }
 
-const tokens: { [token: string]: string } = {
-  user1: "User",
-  user2: "Producer",
-  user3: "Manufacturer",
+const tokens: { [token: string]: { category: string; seed: number } } = {
+  user1: { category: "User", seed: 1 },
+  user2: { category: "User", seed: 2 },
+  user3: { category: "User", seed: 3 },
+  user4: { category: "User", seed: 4 },
+  user5: { category: "User", seed: 5 },
+  user6: { category: "User", seed: 6 },
+  user7: { category: "User", seed: 7 },
+  user8: { category: "User", seed: 8 },
+  user9: { category: "User", seed: 9 },
+  user10: { category: "User", seed: 10 },
+  user11: { category: "User", seed: 11 },
+  user12: { category: "User", seed: 12 },
+  user13: { category: "User", seed: 6 },
 };
 
 const sessions: { [token: string]: WebSessionDoc } = {};
@@ -27,10 +37,11 @@ export default class WebSessionConcept {
   start(session: WebSessionDoc, token: string, user: ObjectId) {
     if (token) {
       if (tokens[token]) {
-        session.category = tokens[token];
+        session.category = tokens[token].category;
         session.user = user.toString();
         session.token = token;
         sessions[token] = session;
+        session.seed = tokens[token].seed;
       } else {
         throw new UnauthenticatedError("Invalid token!");
       }
@@ -38,6 +49,7 @@ export default class WebSessionConcept {
       throw new UnauthenticatedError("Token is required!");
     }
   }
+
   end(session: WebSessionDoc, email?: string) {
     this.isActive(session);
     if (email) {
@@ -45,13 +57,12 @@ export default class WebSessionConcept {
     } else {
       session.category = undefined;
       session.user = undefined;
+      session.seed = 0;
       session.token = "";
       session.email = "";
       session.link = "";
     }
   }
-
-  
 
   isActive(session: WebSessionDoc) {
     if (!session.category && !session.user && !session.token) {
@@ -60,20 +71,10 @@ export default class WebSessionConcept {
   }
 
   isNotActive(session: WebSessionDoc) {
-    if (session.category && session.user && session.token ) {
+    if (session.category && session.user && session.token) {
       throw new NotAllowedError("Must not already be in a session!");
     }
   }
-
-  // getSessionFromToken(sessions: WebSessionDoc[], token: string) {
-  //   const session = sessions.find((session) => session.token === token);
-  
-  //   if (session) {
-  //     return session;
-  //   } else {
-  //     throw new UnauthenticatedError("Invalid token!");
-  //   }
-  // }
 
   getSessionFromToken(token: string) {
     if (sessions[token]) {
@@ -100,13 +101,16 @@ export default class WebSessionConcept {
 
   saveAndContinueLater(session: WebSessionDoc, email: string) {
     this.isActive(session);
-    if (session.token && sessions[session.token]) {
-      session.email = email;
-      session.link = `https://ASCERwebsite.com/continue?token=${session.token}`;
-      // Send email to category
-    } else {
-      throw new UnauthenticatedError("Invalid token!");
-    }
+    // if (session.token && sessions[session.token]) {
+    session.email = email;
+    session.link = `https://ASCERwebsite.com/continue?token=${session.token}`;
+    session.category = undefined;
+    session.user = undefined;
+    session.token = "";
+    // Send email to category
+    // } else {
+    //   throw new UnauthenticatedError("Couldn't save session");
+    // }
   }
 
   getCategory(session: WebSessionDoc) {
@@ -114,19 +118,21 @@ export default class WebSessionConcept {
     return session.category;
   }
 
-  getCategoryFromToken(token:string){
-    return tokens[token];
-  }
-
   getToken(session: WebSessionDoc) {
     this.isActive(session);
     return session.token;
+  }
+
+  getCategoryFromToken(token: string) {
+    return tokens[token].category;
   }
 
   getUser(session: WebSessionDoc) {
     this.isActive(session);
     return new ObjectId(session.user);
   }
+
+  getSeedFromToken(token: string) {
+    return tokens[token].seed;
+  }
 }
-
-

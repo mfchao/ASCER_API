@@ -18,19 +18,23 @@ class DatasetConcept {
     constructor() {
         this.dataset = new doc_1.default("dataset");
     }
-    create(image, rating, category, token) {
+    create(image, rating, category, token, timing) {
         return __awaiter(this, void 0, void 0, function* () {
             if (rating) {
                 const alreadyRated = yield this.alreadyRated(image, token);
                 if (alreadyRated) {
                     const existingEntry = yield this.dataset.readOne({ image, token });
                     if (existingEntry) {
-                        yield this.dataset.updateOne({ _id: existingEntry._id }, { rating });
+                        // await this.dataset.updateOne({ _id: existingEntry._id }, { rating });
+                        existingEntry.ratings.push(rating);
+                        existingEntry.timings.push(timing);
+                        yield this.dataset.updateOne({ _id: existingEntry._id }, { ratings: existingEntry.ratings });
+                        yield this.dataset.updateOne({ _id: existingEntry._id }, { timings: existingEntry.timings });
                         return { msg: "Rating updated successfully!", dataset: yield this.dataset.readOne({ _id: existingEntry._id }) };
                     }
                 }
                 else {
-                    const _id = yield this.dataset.createOne({ image, rating, category, token });
+                    const _id = yield this.dataset.createOne({ image, ratings: [rating], timings: [timing], category, token });
                     return { msg: "Data entry created successfully!", dataset: yield this.dataset.readOne({ _id }) };
                 }
             }
@@ -45,11 +49,22 @@ class DatasetConcept {
             return entry !== null;
         });
     }
+    getRatingNumber(image, token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const entry = yield this.dataset.readOne({ image, token });
+            if (entry !== null) {
+                return entry.ratings[entry.ratings.length - 1];
+            }
+            else {
+                return;
+            }
+        });
+    }
     getRatingbyID(image) {
         return __awaiter(this, void 0, void 0, function* () {
             const entry = yield this.dataset.readMany({ image });
             if (entry === null) {
-                throw new errors_1.NotFoundError(`token not found!`);
+                throw new errors_1.NotFoundError(`entry not found!`);
             }
             else {
                 return entry;
@@ -60,7 +75,7 @@ class DatasetConcept {
         return __awaiter(this, void 0, void 0, function* () {
             const entry = yield this.dataset.readOne({ image });
             if (entry === null) {
-                throw new errors_1.NotFoundError(`token not found!`);
+                throw new errors_1.NotFoundError(`entry not found!`);
             }
             else {
                 return entry === null || entry === void 0 ? void 0 : entry._id;
@@ -81,20 +96,9 @@ class DatasetConcept {
     }
     update(_id, update) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (update.rating !== undefined) {
+            if (update.ratings !== undefined) {
                 yield this.dataset.updateOne({ _id }, update);
                 return { msg: "Entry updated successfully!" };
-            }
-        });
-    }
-    getRatingNumber(image, token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const entry = yield this.dataset.readOne({ image, token });
-            if (entry !== null) {
-                return entry.rating;
-            }
-            else {
-                return;
             }
         });
     }
